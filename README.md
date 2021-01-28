@@ -1,2 +1,2 @@
-# course_work_1
+# boolean_calculator_cli
 Course work C++: Boolean calculator
