@@ -3,90 +3,121 @@
 
 #include <iostream>
 
-void analysis(std::string &str, int *var);
-bool is_num(char c);
-bool is_number(char c);
-bool is_var(char c);
-bool is_oper(char c);
-bool other(char c);
-void help();
+void analysis ( std::string & str, int * var );
+bool is_num ( char c );
+bool is_number ( char c );
+bool is_var ( char c );
+bool is_oper ( char c );
+bool other ( char c );
+void help ();
 
-void analysis(std::string &str, int *var)
+void analysis ( std::string & str, int * var )
 {
-    int size = str.length(), i = 0, j = 0, tempi;
-    bool flag_corr = true, flag = false;
+    int size = str.length();
+    int i = 0;
+    int j = 0;
+    int tempi;
+    bool flag_corr = true;
+    int flag = false;
     int counter1 = 0, loop = 0;
     int maxvar = 1, temp;
-    while(flag_corr)
+    
+    while ( flag_corr )
     {
         flag_corr = false;
-        while(i < size)
+        
+        while ( i < size )
         {
-            if(!is_number(str[i]) && !is_oper(str[i]) && !is_var(str[i]) && !other(str[i]))
+            if ( !is_number( str[ i ] )
+              && !is_oper( str[ i ] )
+              && !is_var( str[ i ] )
+              && !other( str[ i ] )
+            )
             {
                 std::cout << "The " << i + 1 << " symbol is not suitable!\n";
                 std::cout << "Try to enter formula again\n";
-                getline(std::cin, str);
+                
+                getline( std::cin, str );
                 flag_corr = true;
                 break;
             }
-            if(str[i] == '(') ++loop;
-            if(str[i] == ')') --loop;
+
+            if ( str[ i ] == '(' )
+                ++loop;
+            if( str[ i ] == ')' )
+                --loop;
             ++i;
         }
-        if(loop != 0)
+
+        if ( loop != 0 )
         {
-            std::cout << "There is an missing loop!\n";
+            std::cout << "There is an missing loop!\n"; // Replace with exception
             std::cout << "Try to enter formula again\n";
-            getline(std::cin, str);
+            
+            getline( std::cin, str );
             flag_corr = true;
         }
     }
 
     i = 0;
-    while(i < size)
+    while ( i < size )
     {
-        if(str[i] == '!')
+        if ( str[ i ] == '!' )
         {
             counter1 = tempi = i;
-            while(1)
+            while ( true )
             {
                 ++counter1;
                 ++i;
-                if(str[i] == ' ' || str[i] == '!') continue;
-                else break;
+                
+                if ( str[ i ] == ' ' || str[ i ] == '!')
+                    continue;
+                else
+                    break;
             }
-            if(counter1 - tempi > 1)
+
+            if ( counter1 - tempi > 1 )
             {
-                if((counter1 - tempi) % 2 == 0) for(int j = tempi; j < counter1; ++j) str[j] = ' ';
-                else for(int j = tempi; j < counter1 - 1; ++j) str[j] = ' ';
+                if ( !( ( counter1 - tempi ) % 2 ) )
+                    for ( int j = tempi; j < counter1; ++j )
+                        str[ j ] = ' ';
+                else
+                    for ( int j = tempi; j < counter1 - 1; ++j )
+                        str[ j ] = ' ';
                 flag = true;
             }
+
             counter1 = 0;
             i = tempi;
         }
-        else if(is_var(str[i]))
+        else if ( is_var( str[ i ] ) )
         {
             ++i;
             temp = 1;
-            if(!is_number(str[i]))
+
+            if ( !is_number( str[ i ] ) )
             {
                 ++i;
                 continue;
             }
+            
             j = i;
-            if(is_number(str[j]) && str[j] > '0')
+            
+            if ( is_number( str[ j ] ) && str[ j ] > '0' )
             {
                 temp -= 1;
-                while(is_number(str[j]))
+
+                while ( is_number( str[ j ] ) )
                 {
-                    temp += (str[j] - 48);
+                    temp += ( str[ j ] - 48 );
                     temp *= 10;
                     ++j;
                 }
                 temp /= 10;
             }
-            if(maxvar < temp) maxvar = temp;
+            
+            if ( maxvar < temp )
+                maxvar = temp;
         }
 
         ++i;
@@ -94,30 +125,33 @@ void analysis(std::string &str, int *var)
 
     *var = maxvar;
 
-    if(flag)
+    if ( flag )
     {
         std::cout << "This is more correct expression:\n";
-        for(int i = 0; i < size; ++i) if(str[i] != ' ') std::cout << str[i];
-        std::cout << "\n";
+        for ( int i = 0; i < size; ++i )
+            if ( str[ i ] != ' ' )
+                std::cout << str[ i ];
+
+        std::cout << std::endl;
     }
 }
 
-bool is_number(char c)
+bool is_number ( char const c )
 {
     return c >= 48 && c <= 57;
 }
 
-bool is_var(char c)
+bool is_var ( char const c )
 {
-    return (c >= 65 && c <= 90) || (c >= 97 && c <= 122);
+    return ( c >= 65 && c <= 90 ) || ( c >= 97 && c <= 122 );
 }
 
-bool is_oper(char c)
+bool is_oper ( char const c )
 {
     return c == '^' || c == '~' || c == '>' || c == '<' || c == '|' || c == '&';
 }
 
-bool other(char c)
+bool other ( char const c )
 {
     return c == '!' || c == '(' || c == ')' || c == '=' || c == ' ';
 }
