@@ -11,7 +11,7 @@ bool is_oper ( char c );
 bool other ( char c );
 void help ();
 
-void analysis ( std::string & str, int * var )
+void analysis ( std::string & str, int * var ) // TODO: RegExp
 {
     int size = str.length();
     int i = 0;
