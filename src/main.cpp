@@ -1,5 +1,5 @@
-#include "rpe.h"
-#include "analysis.h"
+#include "rpe.hpp"
+#include "analysis.hpp"
 
 int main()
 {

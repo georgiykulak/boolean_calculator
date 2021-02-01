@@ -1,5 +1,5 @@
-#ifndef ANALYSIS_H
-#define ANALYSIS_H
+#ifndef ANALYSIS_HPP
+#define ANALYSIS_HPP
 
 #include <iostream>
 
@@ -137,4 +137,4 @@ void help()
     std::cout << "For example string: \"!x&x2~x1=\"\n\n";
 }
 
-#endif // ANALYSIS_H
+#endif // ANALYSIS_HPP

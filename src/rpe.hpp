@@ -1,10 +1,10 @@
-#ifndef RPE_H
-#define RPE_H
+#ifndef RPE_HPP
+#define RPE_HPP
 
 #include <iostream>
 #include <vector>
 #include <cstdlib>
-#include "stack.h"
+#include "stack.hpp"
 
 class BoolRPE
 {
@@ -422,4 +422,4 @@ BoolRPE::~BoolRPE()
     delete [] X_array;
 }
 
-#endif // RPE_H
+#endif // RPE_HPP
