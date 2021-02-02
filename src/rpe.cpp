@@ -148,6 +148,7 @@ void BoolRPE::calculateExpression ()
 
     std::vector< char > stk_c;
     std::vector< bool > stk_b;
+    std::string bool_formula;
     std::size_t l = 0;
     std::size_t i = 0;
     unsigned temp = 1;
@@ -158,8 +159,8 @@ void BoolRPE::calculateExpression ()
         {
             if ( is_num( m_formula[ i ] ) )
             {
-                m_bool_formula += m_formula[ i ];
-                m_bool_formula += ' ';
+                bool_formula += m_formula[ i ];
+                bool_formula += ' ';
             }
             else if ( is_oper( m_formula[ i ] )
                    || is_unar_oper( m_formula[ i ] ) )
@@ -167,9 +168,9 @@ void BoolRPE::calculateExpression ()
                 while ( !stk_c.empty()
                     && prior( stk_c.back() ) >= prior( m_formula[ i ] ) )
                 {
-                    m_bool_formula += stk_c.back();
+                    bool_formula += stk_c.back();
                     stk_c.pop_back();
-                    m_bool_formula += ' ';
+                    bool_formula += ' ';
                 }
                 
                 stk_c.push_back( m_formula[ i ] );
@@ -193,8 +194,8 @@ void BoolRPE::calculateExpression ()
                     temp /= 10;
                 }
 
-                m_bool_formula += ( m_expressions[ temp - 1 ][ l ] + 48 );
-                m_bool_formula += ' ';
+                bool_formula += ( m_expressions[ temp - 1 ][ l ] + 48 );
+                bool_formula += ' ';
                 temp = 1;
                 --i;
             }
@@ -206,9 +207,9 @@ void BoolRPE::calculateExpression ()
             {
                 while ( stk_c.back() != '(' )
                 {
-                    m_bool_formula += stk_c.back();
+                    bool_formula += stk_c.back();
                     stk_c.pop_back();
-                    m_bool_formula += ' ';
+                    bool_formula += ' ';
                 }
 
                 if ( stk_c.back() == '(' )
@@ -221,9 +222,9 @@ void BoolRPE::calculateExpression ()
             {
                 while ( !stk_c.empty() )
                 {
-                    m_bool_formula += stk_c.back();
+                    bool_formula += stk_c.back();
                     stk_c.pop_back();
-                    m_bool_formula += ' ';
+                    bool_formula += ' ';
                 }
 
                 break;
@@ -234,13 +235,13 @@ void BoolRPE::calculateExpression ()
 
         i = 0;
 
-        while ( i < m_bool_formula.length() )
+        while ( i < bool_formula.length() )
         {
-            if ( is_num( m_bool_formula[ i ] ) )
+            if ( is_num( bool_formula[ i ] ) )
             {
-                stk_b.push_back( m_bool_formula[ i ] - 48 );
+                stk_b.push_back( bool_formula[ i ] - 48 );
             }
-            else if ( is_oper( m_bool_formula[ i ] ) )
+            else if ( is_oper( bool_formula[ i ] ) )
             {
                 auto second = stk_b.back();
                 stk_b.pop_back();
@@ -248,10 +249,10 @@ void BoolRPE::calculateExpression ()
                 stk_b.pop_back();
 
                 stk_b.push_back(
-                    calc( second, m_bool_formula[ i ], first )
+                    calc( second, bool_formula[ i ], first )
                 );
             }
-            else if ( is_unar_oper( m_bool_formula[ i ] ) )
+            else if ( is_unar_oper( bool_formula[ i ] ) )
             {
                 stk_b.back() = !stk_b.back();
             }
@@ -260,7 +261,7 @@ void BoolRPE::calculateExpression ()
         }
 
         i = 0;
-        m_bool_formula = "";
+        bool_formula = "";
         m_answers.push_back( stk_b.back() );
         stk_b.pop_back();
         ++l;

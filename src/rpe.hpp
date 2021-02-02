@@ -6,7 +6,6 @@
 #include <array>
 #include <cmath>
 #include <cassert>
-//#include "stack.hpp" // TODO: Replace with std::stack or std::vector
 
 namespace bcalc
 {
@@ -78,7 +77,6 @@ private:
     */
 
     std::string m_formula;
-    std::string m_bool_formula;
     std::array< bool, 5 > m_classes; // Should be map and removed from class
     bool m_classP = false; // This too
 
