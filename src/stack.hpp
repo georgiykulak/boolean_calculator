@@ -1,5 +1,5 @@
-#ifndef LIST_H
-#define LIST_H
+#ifndef LIST_HPP
+#define LIST_HPP
 
 template <class T>
 class Stack
@@ -91,4 +91,4 @@ Stack<T>::~Stack()
     }
 }
 
-#endif // LIST_H
+#endif // LIST_HPP
