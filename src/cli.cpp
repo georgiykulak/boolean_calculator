@@ -11,7 +11,7 @@ int BooleanCalculatorCli::run () // TODO: Make map for more readable code
     BoolRPE expr;
     std::string expr_string;
     char answer;
-    bool flag = true;
+    bool flag = false;
 
     help();
 
@@ -48,6 +48,8 @@ int BooleanCalculatorCli::run () // TODO: Make map for more readable code
                 
                 if ( std::toupper( answer ) == 'Y' )
                     flag = true;
+                else
+                    flag = false;
             }
         }
         else
