@@ -5,7 +5,7 @@ project( boolean_calculator_cli )
 set( CMAKE_CXX_STANDARD 20 )
 
 add_library( bool_rpe_lib
-    src/rpe.cpp src/rpe.hpp src/stack.hpp 
+    src/rpe.cpp src/rpe.hpp
 )
 
 add_library( cli_lib

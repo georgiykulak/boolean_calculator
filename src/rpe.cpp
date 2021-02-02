@@ -10,6 +10,8 @@ BoolRPE::BoolRPE ( std::string const & expr )
 
 void BoolRPE::setExpression ( std::string const & expr ) // regular expression
 {
+    assert( !expr.empty() );
+
     m_formula = expr;
 
     analyze();
@@ -144,8 +146,8 @@ void BoolRPE::calculateExpression ()
     assert( !m_formula.empty() );
     assert( m_expressions.size() );
 
-    Stack< char > stk_c;
-    Stack< bool > stk_b;
+    std::vector< char > stk_c;
+    std::vector< bool > stk_b;
     std::size_t l = 0;
     std::size_t i = 0;
     unsigned temp = 1;
@@ -163,13 +165,14 @@ void BoolRPE::calculateExpression ()
                    || is_unar_oper( m_formula[ i ] ) )
             {
                 while ( !stk_c.empty()
-                    && prior( stk_c.top() ) >= prior( m_formula[ i ] ) )
+                    && prior( stk_c.back() ) >= prior( m_formula[ i ] ) )
                 {
-                    m_bool_formula += stk_c.pop();
+                    m_bool_formula += stk_c.back();
+                    stk_c.pop_back();
                     m_bool_formula += ' ';
                 }
                 
-                stk_c.push( m_formula[ i ] );
+                stk_c.push_back( m_formula[ i ] );
             }
             // отсчет начинается с 1, вместо "x1" можно писать "x"
             else if ( is_var( m_formula[ i ] ) )
@@ -197,18 +200,19 @@ void BoolRPE::calculateExpression ()
             }
             else if ( m_formula[ i ] == '(' )
             {
-                stk_c.push( m_formula[ i ] );
+                stk_c.push_back( m_formula[ i ] );
             }
             else if ( m_formula[ i ] == ')' )
             {
-                while ( stk_c.top() != '(' )
+                while ( stk_c.back() != '(' )
                 {
-                    m_bool_formula += stk_c.pop();
+                    m_bool_formula += stk_c.back();
+                    stk_c.pop_back();
                     m_bool_formula += ' ';
                 }
 
-                if ( stk_c.top() == '(' )
-                    stk_c.pop();
+                if ( stk_c.back() == '(' )
+                    stk_c.pop_back();
             }
 
             if ( !stk_c.empty()
@@ -217,7 +221,8 @@ void BoolRPE::calculateExpression ()
             {
                 while ( !stk_c.empty() )
                 {
-                    m_bool_formula += stk_c.pop();
+                    m_bool_formula += stk_c.back();
+                    stk_c.pop_back();
                     m_bool_formula += ' ';
                 }
 
@@ -233,17 +238,22 @@ void BoolRPE::calculateExpression ()
         {
             if ( is_num( m_bool_formula[ i ] ) )
             {
-                stk_b.push( m_bool_formula[ i ] - 48 );
+                stk_b.push_back( m_bool_formula[ i ] - 48 );
             }
             else if ( is_oper( m_bool_formula[ i ] ) )
             {
-                stk_b.push(
-                    calc( stk_b.pop(), m_bool_formula[ i ], stk_b.pop() )
+                auto second = stk_b.back();
+                stk_b.pop_back();
+                auto first = stk_b.back();
+                stk_b.pop_back();
+
+                stk_b.push_back(
+                    calc( second, m_bool_formula[ i ], first )
                 );
             }
             else if ( is_unar_oper( m_bool_formula[ i ] ) )
             {
-                stk_b.push( !stk_b.pop() );
+                stk_b.back() = !stk_b.back();
             }
 
             ++i;
@@ -251,7 +261,8 @@ void BoolRPE::calculateExpression ()
 
         i = 0;
         m_bool_formula = "";
-        m_answers.push_back( stk_b.pop() );
+        m_answers.push_back( stk_b.back() );
+        stk_b.pop_back();
         ++l;
     }
 }
@@ -311,7 +322,7 @@ bool BoolRPE::is_unar_oper ( char c ) noexcept
     return c == '!';
 }
 
-bool BoolRPE::calc ( bool second, char oper, bool first )
+bool BoolRPE::calc ( bool second, char oper, bool first ) const noexcept
 {
     if ( oper == '&' ) return first & second;
     else if ( oper == '|' ) return first | second;

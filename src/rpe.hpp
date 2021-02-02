@@ -6,7 +6,7 @@
 #include <array>
 #include <cmath>
 #include <cassert>
-#include "stack.hpp" // TODO: Replace with std::stack or std::vector
+//#include "stack.hpp" // TODO: Replace with std::stack or std::vector
 
 namespace bcalc
 {
@@ -64,7 +64,7 @@ private:
     // Number of bits in variables ( m )
     std::size_t m_size = 0;
 
-    Table m_expressions;
+    Table m_expressions; // Should be map
     /*
         Variable '0'   = a(0),a(1)...a(m-1)
         Variable '1'   = a(0),a(1)...a(m-1)
@@ -84,7 +84,7 @@ private:
 
     void clearAndReserve ( std::size_t const size );
     
-    static bool calc ( bool second, char oper, bool first ); // TODO: Replace with map
+    bool calc ( bool second, char oper, bool first ) const noexcept; // TODO: Replace with map
 
     void analyze (); // TODO: RegExp
 };
