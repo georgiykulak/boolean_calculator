@@ -10,47 +10,47 @@
 namespace bcalc
 {
 
-// TODO: Reorder functions in rpe.cpp like there
-class BoolRPE
+// Boolean Reverse Polish Notation Interpreter
+class BoolRPN
 {
 public:
-    ~BoolRPE () = default;
+    ~BoolRPN () = default;
 
-    BoolRPE () = default;
+    BoolRPN () = default;
 
-    BoolRPE ( std::string const & );
+    BoolRPN ( std::string const & );
 
     void setExpression ( std::string const & ); // TODO: Upgrade
 
     void setViaTruthTable (); // full-cased testing
 
-    void setVariablesRandomly ( std::size_t const );
+    void setVariablesDecimals ();
 
     void setVariablesBinaries ( std::size_t const );
 
-    void setVariablesDecimals ();
+    void setVariablesRandomly ( std::size_t const );
 
     void getVariables () const noexcept;
 
     void getAnswer () const noexcept;
 
+    void getClassification () noexcept;
+
     void calculateExpression ();
 
-    void classification () noexcept;
+    constexpr static int prior ( char const c ) noexcept;
 
-    static int prior ( char const c ) noexcept; // TODO: Replace with map
+    constexpr static bool is_num ( char const c ) noexcept;
 
-    static bool is_num ( char const c ) noexcept;
+    constexpr static bool is_number ( char const c ) noexcept;
 
-    static bool is_number ( char const c ) noexcept;
+    constexpr static bool is_var ( char const c ) noexcept;
 
-    static bool is_var ( char const c ) noexcept; // TODO: Use only x variable
+    constexpr static bool is_oper ( char const c ) noexcept;
 
-    static bool is_oper ( char const c ) noexcept;
+    constexpr static bool is_unar_oper ( char const c ) noexcept;
 
-    static bool is_unar_oper ( char const c ) noexcept;
-
-    static bool is_other ( char const c ) noexcept;
+    constexpr static bool is_other ( char const c ) noexcept;
 
 private:
     using Boolean = unsigned char;
@@ -60,10 +60,12 @@ private:
     static constexpr Boolean s_false = 0;
     static constexpr Boolean s_true = 1;
 
+    // TODO: Change the order of members to make class more compact
+
     // Number of bits in variables ( m )
     std::size_t m_size = 0;
 
-    Table m_expressions; // Should be map
+    Table m_expressions; // Should be map of vectors
     /*
         Variable '0'   = a(0),a(1)...a(m-1)
         Variable '1'   = a(0),a(1)...a(m-1)
@@ -80,11 +82,11 @@ private:
     std::array< bool, 5 > m_classes; // Should be map and removed from class
     bool m_classP = false; // This too
 
+    void analyze (); // TODO: RegExp
+
     void clearAndReserve ( std::size_t const size );
     
-    bool calc ( bool second, char oper, bool first ) const noexcept; // TODO: Replace with map
-
-    void analyze (); // TODO: RegExp
+    constexpr bool calc ( bool second, char oper, bool first ) const noexcept;
 };
 
 } // namespace bcalc

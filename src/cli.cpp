@@ -8,7 +8,7 @@ BooleanCalculatorCli::BooleanCalculatorCli ( int argc, char ** argv )
 
 int BooleanCalculatorCli::run () // TODO: Make map for more readable code
 {
-    BoolRPE expr;
+    BoolRPN expr;
     std::string expr_string;
     char answer;
     bool flag = false;
@@ -18,7 +18,7 @@ int BooleanCalculatorCli::run () // TODO: Make map for more readable code
     std::cout << "Enter your function\n";
     std::getline( std::cin, expr_string );
 
-    expr = BoolRPE( expr_string );
+    expr = BoolRPN( expr_string );
 
     do
     {
@@ -48,8 +48,6 @@ int BooleanCalculatorCli::run () // TODO: Make map for more readable code
                 
                 if ( std::toupper( answer ) == 'Y' )
                     flag = true;
-                else
-                    flag = false;
             }
         }
         else
@@ -74,7 +72,7 @@ int BooleanCalculatorCli::run () // TODO: Make map for more readable code
         expr.getAnswer();
         
         if ( flag )
-            expr.classification();
+            expr.getClassification();
         
         flag = false;
         

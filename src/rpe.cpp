@@ -3,12 +3,18 @@
 namespace bcalc
 {
 
-BoolRPE::BoolRPE ( std::string const & expr )
+//----------------------------------------------------------------------------//
+// Public implementations                                                     //
+//----------------------------------------------------------------------------//
+
+BoolRPN::BoolRPN ( std::string const & expr )
 {
     setExpression( expr );
 }
 
-void BoolRPE::setExpression ( std::string const & expr ) // regular expression
+//----------------------------------------------------------------------------//
+
+void BoolRPN::setExpression ( std::string const & expr ) // regular expression
 {
     assert( !expr.empty() );
 
@@ -20,32 +26,45 @@ void BoolRPE::setExpression ( std::string const & expr ) // regular expression
     // init();
 }
 
-void BoolRPE::setVariablesBinaries ( std::size_t const size )
+//----------------------------------------------------------------------------//
+
+void BoolRPN::setViaTruthTable ()
 {
-    assert( !m_formula.empty() );
     assert( m_expressions.size() );
 
-    clearAndReserve( size );
-
-    bool tmp;
-    std::size_t l = 0;
-
-    std::cout << "Enter through the space every variable:\n";
+    std::size_t tempsize = std::pow( 2, m_expressions.size() );
     
+    clearAndReserve( tempsize );
+    std::size_t t1 = 0;
+    std::size_t t2;
+
     for ( auto & expr : m_expressions )
     {
-        std::cout << l + 1 << " variable = ";
-        ++l;
-        
-        for ( std::size_t i = 0; i < m_size; ++i )
+        tempsize /= 2;
+        t2 = tempsize;
+
+        while ( t2 <= m_size )
         {
-            std::cin >> tmp;
-            expr.push_back( static_cast< Boolean >( tmp ) );
+            for ( std::size_t j = t1; j < t2; ++j )
+                expr.push_back( s_false );
+            
+            t1 += tempsize;
+            t2 += tempsize;
+            
+            for ( std::size_t j = t1; j < t2; ++j )
+                expr.push_back( s_true );
+            
+            t1 += tempsize;
+            t2 += tempsize;
         }
+
+        t1 = 0;
     }
 }
 
-void BoolRPE::setVariablesDecimals ()
+//----------------------------------------------------------------------------//
+
+void BoolRPN::setVariablesDecimals ()
 {
     assert( !m_formula.empty() );
     assert( m_expressions.size() );
@@ -102,7 +121,36 @@ void BoolRPE::setVariablesDecimals ()
     }
 }
 
-void BoolRPE::setVariablesRandomly ( std::size_t const size )
+//----------------------------------------------------------------------------//
+
+void BoolRPN::setVariablesBinaries ( std::size_t const size )
+{
+    assert( !m_formula.empty() );
+    assert( m_expressions.size() );
+
+    clearAndReserve( size );
+
+    bool tmp;
+    std::size_t l = 0;
+
+    std::cout << "Enter through the space every variable:\n";
+    
+    for ( auto & expr : m_expressions )
+    {
+        std::cout << l + 1 << " variable = ";
+        ++l;
+        
+        for ( std::size_t i = 0; i < m_size; ++i )
+        {
+            std::cin >> tmp;
+            expr.push_back( static_cast< Boolean >( tmp ) );
+        }
+    }
+}
+
+//----------------------------------------------------------------------------//
+
+void BoolRPN::setVariablesRandomly ( std::size_t const size )
 {
     assert( !m_formula.empty() );
     assert( m_expressions.size() );
@@ -116,7 +164,9 @@ void BoolRPE::setVariablesRandomly ( std::size_t const size )
             expr.push_back( static_cast< Boolean >( ( rand() % 17 ) % 2 ) );
 }
 
-void BoolRPE::getVariables () const noexcept
+//----------------------------------------------------------------------------//
+
+void BoolRPN::getVariables () const noexcept
 {
     std::cout << "Variables:\n";
     
@@ -133,7 +183,9 @@ void BoolRPE::getVariables () const noexcept
     }
 }
 
-void BoolRPE::getAnswer () const noexcept
+//----------------------------------------------------------------------------//
+
+void BoolRPN::getAnswer () const noexcept
 {
     std::cout << "Answer is ";
     for ( auto const & elem : m_answers )
@@ -141,7 +193,118 @@ void BoolRPE::getAnswer () const noexcept
     std::cout << std::endl;
 }
 
-void BoolRPE::calculateExpression ()
+//----------------------------------------------------------------------------//
+
+void BoolRPN::getClassification () noexcept
+{
+    assert( m_size );
+
+    bool flag = true;
+    bool exit_flag = false;
+    bool const c0 = m_answers[ 0 ];
+    bool const f = m_answers[ m_size - 1 ];
+    bool c = m_answers[ 0 ];
+
+    if ( m_answers[ 0 ] )
+        m_classes[ 0 ] = true;
+
+    if ( m_answers[ m_size - 1 ] != 1 )
+        m_classes[ 1 ] = true;
+
+    for ( std::size_t i = 0; i < m_size / 2; ++i )
+    {
+        if ( m_answers[ i ] == m_answers[ m_size - i - 1 ] )
+        {
+            m_classes[ 2 ] = true;
+            break;
+        }
+    }
+
+    for ( int i = 0; i < m_size - 1; ++i )
+    {
+        for ( int k = i + 1; k < m_size; ++k )
+        {
+            for ( int j = 0; j < m_expressions.size(); ++j )
+            {
+                if ( m_expressions[ j ][ i ] > m_expressions[ j ][ k ] )
+                {
+                    flag = false;
+                    break;
+                }
+            }
+
+            if ( flag && m_answers[ i ] > m_answers[ k ] )
+            {
+                m_classes[ 3 ] = true;
+                exit_flag = true;
+                break;
+            }
+
+            flag = true;
+        }
+
+        if ( exit_flag )
+            break;
+    }
+
+    int j = 1;
+
+    for ( auto && expr : m_expressions )
+    {
+        if ( m_answers[ j ] ^ c0 )
+            c ^= 1;
+
+        j *= 2;
+    }
+    
+    if ( c != f )
+        m_classes[ 4 ] = true;
+
+    m_classP = true;
+
+    for ( auto & elem : m_classes )
+    {
+        if ( !elem )
+        {
+            m_classP = false;
+            break;
+        }
+    }
+
+    if ( !m_classes[ 0 ] )
+        std::cout << "T0: Zero is constant\n";
+    else
+        std::cout << "T0: Zero is NOT constant\n";
+    
+    if ( !m_classes[ 1 ] )
+        std::cout << "T1: One is constant\n";
+    else
+        std::cout << "T1: One is NOT constant\n";
+    
+    if ( !m_classes[ 2 ] )
+        std::cout << "S:  The function is self-dual\n";
+    else
+        std::cout << "S:  The function is NOT self-dual\n";
+    
+    if ( !m_classes[ 3 ] )
+        std::cout << "M:  The function is monotone\n";
+    else
+        std::cout << "M:  The function is NOT monotone\n";
+    
+    if ( !m_classes[ 4 ] )
+        std::cout << "L:  The function is linear\n";
+    else
+        std::cout << "L:  The function is NOT linear\n";
+    
+    if ( m_classP )
+        std::cout << "The function is full\n";
+    else
+        std::cout << "The function is NOT full\n";
+}
+
+//----------------------------------------------------------------------------//
+
+void BoolRPN::calculateExpression ()
 {
     assert( !m_formula.empty() );
     assert( m_expressions.size() );
@@ -268,23 +431,9 @@ void BoolRPE::calculateExpression ()
     }
 }
 
-void BoolRPE::clearAndReserve ( std::size_t const size )
-{
-    assert( size );
+//----------------------------------------------------------------------------//
 
-    m_size = size;
-
-    for ( auto & expr : m_expressions )
-    {
-        LineOfTable().swap( expr );
-        expr.reserve( m_size );
-    }
-
-    LineOfTable().swap( m_answers );
-    m_answers.reserve( m_size );
-}
-
-int BoolRPE::prior ( char const c ) noexcept
+constexpr int BoolRPN::prior ( char const c ) noexcept
 {
     if ( c == '(' ) return 1;
     else if ( c == '^' ) return 2;
@@ -294,189 +443,59 @@ int BoolRPE::prior ( char const c ) noexcept
     else if ( c == '|' ) return 6;
     else if ( c == '&' ) return 7;
     else if ( c == '!' ) return 8;
+
+    assert( false );
     
-    return 0;
+    return false;
 }
 
-bool BoolRPE::is_num ( char const c ) noexcept
+//----------------------------------------------------------------------------//
+
+constexpr bool BoolRPN::is_num ( char const c ) noexcept
 {
     return c == '0' || c == '1';
 }
 
-bool BoolRPE::is_number ( char const c ) noexcept
+//----------------------------------------------------------------------------//
+
+constexpr bool BoolRPN::is_number ( char const c ) noexcept
 {
     return std::isdigit( static_cast< unsigned char >( c ) );
 }
 
-bool BoolRPE::is_var ( char const c ) noexcept
+//----------------------------------------------------------------------------//
+
+constexpr bool BoolRPN::is_var ( char const c ) noexcept
 {
     return c == 'X' || c == 'x';
 }
 
-bool BoolRPE::is_oper ( char const c ) noexcept
+//----------------------------------------------------------------------------//
+
+constexpr bool BoolRPN::is_oper ( char const c ) noexcept
 {
     return c == '^' || c == '~' || c == '>' || c == '<' || c == '|' || c == '&';
 }
 
-bool BoolRPE::is_unar_oper ( char c ) noexcept
+//----------------------------------------------------------------------------//
+
+constexpr bool BoolRPN::is_unar_oper ( char c ) noexcept
 {
     return c == '!';
 }
 
-bool BoolRPE::calc ( bool second, char oper, bool first ) const noexcept
-{
-    if ( oper == '&' ) return first & second;
-    else if ( oper == '|' ) return first | second;
-    else if ( oper == '<' ) return first & !second;
-    else if ( oper == '>' ) return !first | second;
-    else if ( oper == '~' ) return first == second;
-    else if ( oper == '^' ) return first ^ second;
+//----------------------------------------------------------------------------//
 
-    return 0;
+constexpr bool BoolRPN::is_other ( char const c ) noexcept
+{
+    return c == '!' || c == '(' || c == ')' || c == '=' || c == ' ';
 }
 
-void BoolRPE::setViaTruthTable ()
-{
-    assert( m_expressions.size() );
+//----------------------------------------------------------------------------//
+// Private implementations                                                    //
+//----------------------------------------------------------------------------//
 
-    std::size_t tempsize = std::pow( 2, m_expressions.size() );
-    
-    clearAndReserve( tempsize );
-    std::size_t t1 = 0;
-    std::size_t t2;
-
-    for ( auto & expr : m_expressions )
-    {
-        tempsize /= 2;
-        t2 = tempsize;
-
-        while ( t2 <= m_size )
-        {
-            for ( std::size_t j = t1; j < t2; ++j )
-                expr.push_back( s_false );
-            
-            t1 += tempsize;
-            t2 += tempsize;
-            
-            for ( std::size_t j = t1; j < t2; ++j )
-                expr.push_back( s_true );
-            
-            t1 += tempsize;
-            t2 += tempsize;
-        }
-
-        t1 = 0;
-    }
-}
-
-void BoolRPE::classification () noexcept
-{
-    assert( m_size );
-
-    bool flag = true;
-    bool exit_flag = false;
-    bool const c0 = m_answers[ 0 ];
-    bool const f = m_answers[ m_size - 1 ];
-    bool c = m_answers[ 0 ];
-
-    if ( m_answers[ 0 ] )
-        m_classes[ 0 ] = true;
-
-    if ( m_answers[ m_size - 1 ] != 1 )
-        m_classes[ 1 ] = true;
-
-    for ( std::size_t i = 0; i < m_size / 2; ++i )
-    {
-        if ( m_answers[ i ] == m_answers[ m_size - i - 1 ] )
-        {
-            m_classes[ 2 ] = true;
-            break;
-        }
-    }
-
-    for ( int i = 0; i < m_size - 1; ++i )
-    {
-        for ( int k = i + 1; k < m_size; ++k )
-        {
-            for ( int j = 0; j < m_expressions.size(); ++j )
-            {
-                if ( m_expressions[ j ][ i ] > m_expressions[ j ][ k ] )
-                {
-                    flag = false;
-                    break;
-                }
-            }
-
-            if ( flag && m_answers[ i ] > m_answers[ k ] )
-            {
-                m_classes[ 3 ] = true;
-                exit_flag = true;
-                break;
-            }
-
-            flag = true;
-        }
-
-        if ( exit_flag )
-            break;
-    }
-
-    int j = 1;
-
-    for ( auto && expr : m_expressions )
-    {
-        if ( m_answers[ j ] ^ c0 )
-            c ^= 1;
-
-        j *= 2;
-    }
-    
-    if ( c != f )
-        m_classes[ 4 ] = true;
-
-    m_classP = true;
-
-    for ( auto & elem : m_classes )
-    {
-        if ( !elem )
-        {
-            m_classP = false;
-            break;
-        }
-    }
-
-    if ( !m_classes[ 0 ] )
-        std::cout << "T0: Zero is constant\n";
-    else
-        std::cout << "T0: Zero is NOT constant\n";
-    
-    if ( !m_classes[ 1 ] )
-        std::cout << "T1: One is constant\n";
-    else
-        std::cout << "T1: One is NOT constant\n";
-    
-    if ( !m_classes[ 2 ] )
-        std::cout << "S:  The function is self-dual\n";
-    else
-        std::cout << "S:  The function is NOT self-dual\n";
-    
-    if ( !m_classes[ 3 ] )
-        std::cout << "M:  The function is monotone\n";
-    else
-        std::cout << "M:  The function is NOT monotone\n";
-    
-    if ( !m_classes[ 4 ] )
-        std::cout << "L:  The function is linear\n";
-    else
-        std::cout << "L:  The function is NOT linear\n";
-    
-    if ( m_classP )
-        std::cout << "The function is full\n";
-    else
-        std::cout << "The function is NOT full\n";
-}
-
-void BoolRPE::analyze () // TODO: RegExp
+void BoolRPN::analyze () // TODO: RegExp
 {
     assert( m_formula.length() );
 
@@ -605,9 +624,38 @@ void BoolRPE::analyze () // TODO: RegExp
     }
 }
 
-bool BoolRPE::is_other ( char const c ) noexcept
+//----------------------------------------------------------------------------//
+
+void BoolRPN::clearAndReserve ( std::size_t const size )
 {
-    return c == '!' || c == '(' || c == ')' || c == '=' || c == ' ';
+    assert( size );
+
+    m_size = size;
+
+    for ( auto & expr : m_expressions )
+    {
+        LineOfTable().swap( expr );
+        expr.reserve( m_size );
+    }
+
+    LineOfTable().swap( m_answers );
+    m_answers.reserve( m_size );
+}
+
+//----------------------------------------------------------------------------//
+
+constexpr bool BoolRPN::calc ( bool second, char oper, bool first ) const noexcept
+{
+    if ( oper == '&' ) return first & second;
+    else if ( oper == '|' ) return first | second;
+    else if ( oper == '<' ) return first & !second;
+    else if ( oper == '>' ) return !first | second;
+    else if ( oper == '~' ) return first == second;
+    else if ( oper == '^' ) return first ^ second;
+
+    assert( false );
+
+    return false;
 }
 
 } // namespace bcalc

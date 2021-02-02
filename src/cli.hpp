@@ -2,7 +2,6 @@
 #define CLI_HPP
 
 #include "rpe.hpp"
-#include <cctype>
 
 namespace bcalc
 {
