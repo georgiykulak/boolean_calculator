@@ -158,6 +158,71 @@ protected:
             expr.reserve( m_size );
         }
     }
+
+    void convertToBinaryVariables ( std::vector< std::size_t > & variables )
+    {
+        std::size_t maxCounter = 1;
+        
+        findMaxBitWidth( variables, maxCounter );
+        
+        clearAndReserve( maxCounter );
+
+        fillVariablesWithFalse();
+
+        convertDecimalsToBinaries( variables );
+    }
+
+    void findMaxBitWidth ( std::vector< std::size_t > const & variables, std::size_t & maxCounter )
+    {
+        std::size_t counter = 0;
+        std::size_t tmp;
+        
+        for ( auto const var : variables )
+        {
+            tmp = var;
+            
+            while ( tmp )
+            {
+                tmp /= 2;
+                ++counter;
+            }
+            
+            if ( counter > maxCounter )
+                maxCounter = counter;
+            
+            counter = 0;
+        }
+    }
+
+    void fillVariablesWithFalse ()
+    {
+        for ( auto & expr : m_expressions )
+            for ( std::size_t k = 0; k < m_size; ++k )
+                expr.push_back( BoolRPN::s_false );
+    }
+
+    void convertDecimalsToBinaries ( std::vector< std::size_t > & variables )
+    {
+        std::size_t i = 0;
+        long j = 0;
+        auto variableSize = m_expressions.size();
+        
+        while ( i < variableSize )
+        {
+            j = m_size - 1;
+
+            while ( variables[ i ] && j >= 0 )
+            {
+                if ( variables[ i ] % 2 )
+                    m_expressions[ i ][ j ] = BoolRPN::s_true;
+                
+                --j;
+                variables[ i ] /= 2;
+            }
+
+            ++i;
+        }
+    }
 };
 
 // InputManager for CLI
@@ -230,11 +295,6 @@ public:
         assert( m_expressions.size() );
 
         std::vector< std::size_t > variables( m_expressions.size() );
-        std::size_t maxCounter = 1;
-        std::size_t temp;
-        std::size_t counter = 0;
-        std::size_t i = 0;
-        long j = 0;
         std::size_t l = 0;
 
         std::cout << "Enter through the enter every variable (decimal):\n";
@@ -243,42 +303,10 @@ public:
         {
             std::cout << l + 1 << " variable = ";
             std::cin >> var;
-            temp = var;
-            
-            while ( temp )
-            {
-                temp /= 2;
-                ++counter;
-            }
-            
-            if ( counter > maxCounter )
-                maxCounter = counter;
-            
-            counter = 0;
+            ++l;
         }
-        
-        clearAndReserve( maxCounter );
 
-        for ( auto & expr : m_expressions )
-            for ( std::size_t k = 0; k < m_size; ++k )
-                expr.push_back( BoolRPN::s_false );
-
-        auto variableSize = m_expressions.size();
-        while ( i < variableSize )
-        {
-            j = m_size - 1;
-
-            while ( variables[ i ] && j >= 0 )
-            {
-                if ( variables[ i ] % 2 )
-                    m_expressions[ i ][ j ] = BoolRPN::s_true;
-                
-                --j;
-                variables[ i ] /= 2;
-            }
-
-            ++i;
-        }
+        convertToBinaryVariables( variables );
     }
 
     void setVariablesBinaries ( std::size_t const size ) override
