@@ -20,6 +20,7 @@ int BooleanCalculatorCli::run () // TODO: Make map for more readable code
 
     expr = BoolRPN( expr_string );
 
+    /*
     do
     {
         std::cout << "Do you want to add elements manually? (y/n) ";
@@ -78,8 +79,17 @@ int BooleanCalculatorCli::run () // TODO: Make map for more readable code
         
         std::cout << "Do you want to continue? (y/n) ";
         std::cin >> answer;
+
     }
     while ( std::toupper( answer ) == 'Y' );
+    */
+
+    InputManagerCLI ioManager;
+    expr.set( ioManager );
+    //expr.get( ioManager );
+    expr.getVariables();
+    expr.calculateExpression();
+    expr.getAnswer();
 
     return 0;
 }

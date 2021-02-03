@@ -28,141 +28,25 @@ void BoolRPN::setExpression ( std::string const & expr ) // regular expression
 
 //----------------------------------------------------------------------------//
 
-void BoolRPN::setViaTruthTable ()
+void BoolRPN::set ( BaseInputManager & mngr )
 {
-    assert( m_expressions.size() );
+    assert( !m_formula.empty() );
 
-    std::size_t tempsize = std::pow( 2, m_expressions.size() );
-    
-    clearAndReserve( tempsize );
-    std::size_t t1 = 0;
-    std::size_t t2;
+    mngr.input( m_expressions, m_size );
 
-    for ( auto & expr : m_expressions )
-    {
-        tempsize /= 2;
-        t2 = tempsize;
+    // check ...
 
-        while ( t2 <= m_size )
-        {
-            for ( std::size_t j = t1; j < t2; ++j )
-                expr.push_back( s_false );
-            
-            t1 += tempsize;
-            t2 += tempsize;
-            
-            for ( std::size_t j = t1; j < t2; ++j )
-                expr.push_back( s_true );
-            
-            t1 += tempsize;
-            t2 += tempsize;
-        }
-
-        t1 = 0;
-    }
+    LineOfTable().swap( m_answers );
+    m_answers.reserve( m_size );
 }
 
 //----------------------------------------------------------------------------//
 
-void BoolRPN::setVariablesDecimals ()
+/*void BoolRPN::get ( BaseInputManager & mngr ) const noexcept
 {
     assert( !m_formula.empty() );
-    assert( m_expressions.size() );
 
-    std::vector< std::size_t > variables( m_expressions.size() );
-    std::size_t maxCounter = 1;
-    std::size_t temp;
-    std::size_t counter = 0;
-    std::size_t i = 0;
-    long j = 0;
-    std::size_t l = 0;
-
-    std::cout << "Enter through the enter every variable (decimal):\n";
-    
-    for ( auto & var : variables )
-    {
-        std::cout << l + 1 << " variable = ";
-        std::cin >> var;
-        temp = var;
-        
-        while ( temp )
-        {
-            temp /= 2;
-            ++counter;
-        }
-        
-        if ( counter > maxCounter )
-            maxCounter = counter;
-        
-        counter = 0;
-    }
-    
-    clearAndReserve( maxCounter );
-
-    for ( auto & expr : m_expressions )
-        for ( std::size_t k = 0; k < m_size; ++k )
-            expr.push_back( s_false );
-
-    auto variableSize = m_expressions.size();
-    while ( i < variableSize )
-    {
-        j = m_size - 1;
-
-        while ( variables[ i ] && j >= 0 )
-        {
-            if ( variables[ i ] % 2 )
-                m_expressions[ i ][ j ] = s_true;
-            
-            --j;
-            variables[ i ] /= 2;
-        }
-
-        ++i;
-    }
-}
-
-//----------------------------------------------------------------------------//
-
-void BoolRPN::setVariablesBinaries ( std::size_t const size )
-{
-    assert( !m_formula.empty() );
-    assert( m_expressions.size() );
-
-    clearAndReserve( size );
-
-    bool tmp;
-    std::size_t l = 0;
-
-    std::cout << "Enter through the space every variable:\n";
-    
-    for ( auto & expr : m_expressions )
-    {
-        std::cout << l + 1 << " variable = ";
-        ++l;
-        
-        for ( std::size_t i = 0; i < m_size; ++i )
-        {
-            std::cin >> tmp;
-            expr.push_back( static_cast< Boolean >( tmp ) );
-        }
-    }
-}
-
-//----------------------------------------------------------------------------//
-
-void BoolRPN::setVariablesRandomly ( std::size_t const size )
-{
-    assert( !m_formula.empty() );
-    assert( m_expressions.size() );
-
-    srand( time( NULL ) );
-
-    clearAndReserve( size );
-
-    for ( auto & expr : m_expressions )
-        for ( std::size_t i = 0; i < m_size; ++i )
-            expr.push_back( static_cast< Boolean >( ( rand() % 17 ) % 2 ) );
-}
+}*/
 
 //----------------------------------------------------------------------------//
 
@@ -622,24 +506,6 @@ void BoolRPN::analyze () // TODO: RegExp
 
         std::cout << std::endl;
     }
-}
-
-//----------------------------------------------------------------------------//
-
-void BoolRPN::clearAndReserve ( std::size_t const size )
-{
-    assert( size );
-
-    m_size = size;
-
-    for ( auto & expr : m_expressions )
-    {
-        LineOfTable().swap( expr );
-        expr.reserve( m_size );
-    }
-
-    LineOfTable().swap( m_answers );
-    m_answers.reserve( m_size );
 }
 
 //----------------------------------------------------------------------------//
