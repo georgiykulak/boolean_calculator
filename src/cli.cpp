@@ -6,6 +6,8 @@ namespace bcalc
 BooleanCalculatorCli::BooleanCalculatorCli ( int argc, char ** argv )
 {}
 
+//----------------------------------------------------------------------------//
+
 int BooleanCalculatorCli::run () // TODO: Make map for more readable code
 {
     BoolRPN expr;
@@ -93,6 +95,8 @@ int BooleanCalculatorCli::run () // TODO: Make map for more readable code
 
     return 0;
 }
+
+//----------------------------------------------------------------------------//
 
 void BooleanCalculatorCli::help ()
 {

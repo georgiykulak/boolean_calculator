@@ -8,16 +8,32 @@ add_library( bool_rpn_lib
     src/rpe.cpp src/rpe.hpp
 )
 
+add_library( base_input_manager
+    src/base_input_manager.cpp src/rpe.hpp
+)
+
+target_link_libraries( bool_rpn_lib
+    base_input_manager
+)
+
+add_library( cli_input_manager
+    src/cli_input_manager.cpp src/cli_input_manager.hpp
+)
+
+target_link_libraries( cli_input_manager
+    base_input_manager
+)
+
 add_library( cli_lib
     src/cli.cpp src/cli.hpp
 )
 
 target_link_libraries( cli_lib
-    bool_rpn_lib
+    bool_rpn_lib cli_input_manager
 )
 
 add_executable( bool_calc
-    src/main.cpp
+    src/main.cpp src/cli.hpp
 )
 
 target_link_libraries( bool_calc

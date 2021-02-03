@@ -1,11 +1,14 @@
 #ifndef RPE_HPP
 #define RPE_HPP
 
-#include <iostream>
+#include <iostream> // TODO: Remove it
+#include <string>
 #include <vector>
 #include <array>
 #include <cmath>
 #include <cassert>
+#include <cstdlib>
+#include <ctime>
 
 namespace bcalc
 {
@@ -85,6 +88,8 @@ private:
     constexpr bool calc ( bool second, char oper, bool first ) const noexcept;
 };
 
+//----------------------------------------------------------------------------//
+
 class BaseInputManager
 {
 public:
@@ -93,247 +98,25 @@ public:
     virtual void setVariablesDecimals () = 0;
     virtual void setVariablesBinaries ( std::size_t const ) = 0; // TODO: Do not depend on size as arg, parse string with bools
     
-    void setVariablesRandomly ( std::size_t const size )
-    {
-        assert( m_expressions.size() );
+    void setVariablesRandomly ( std::size_t const );
 
-        srand( time( NULL ) );
-
-        clearAndReserve( size );
-
-        for ( auto & expr : m_expressions )
-            for ( std::size_t i = 0; i < m_size; ++i )
-                expr.push_back(
-                        static_cast< BoolRPN::Boolean >( ( rand() % 17 ) % 2 )
-                );
-    }
-
-    void setViaTruthTable () // full-cased testing
-    {
-        assert( m_expressions.size() );
-
-        std::size_t tempsize = std::pow( 2, m_expressions.size() );
-        std::size_t t1 = 0;
-        std::size_t t2;
-        
-        clearAndReserve( tempsize );
-
-        for ( auto & expr : m_expressions )
-        {
-            tempsize /= 2;
-            t2 = tempsize;
-
-            while ( t2 <= m_size )
-            {
-                for ( std::size_t j = t1; j < t2; ++j )
-                    expr.push_back( BoolRPN::s_false );
-                
-                t1 += tempsize;
-                t2 += tempsize;
-                
-                for ( std::size_t j = t1; j < t2; ++j )
-                    expr.push_back( BoolRPN::s_true );
-                
-                t1 += tempsize;
-                t2 += tempsize;
-            }
-
-            t1 = 0;
-        }
-    }
+    void setViaTruthTable (); // full-cased testing
 
 protected:
     BoolRPN::Table m_expressions; // TODO: Don't store data
     std::size_t m_size; // TODO: Don't store data
 
-    void clearAndReserve ( std::size_t const size )
-    {
-        assert( size );
+    void clearAndReserve ( std::size_t const );
 
-        m_size = size;
+    void convertToBinaryVariables ( std::vector< std::size_t > & );
 
-        for ( auto & expr : m_expressions )
-        {
-            BoolRPN::LineOfTable().swap( expr );
-            expr.reserve( m_size );
-        }
-    }
+    void findMaxBitWidth ( std::vector< std::size_t > const &, std::size_t & );
 
-    void convertToBinaryVariables ( std::vector< std::size_t > & variables )
-    {
-        std::size_t maxCounter = 1;
-        
-        findMaxBitWidth( variables, maxCounter );
-        
-        clearAndReserve( maxCounter );
+    void fillVariablesWithFalse ();
 
-        fillVariablesWithFalse();
-
-        convertDecimalsToBinaries( variables );
-    }
-
-    void findMaxBitWidth ( std::vector< std::size_t > const & variables, std::size_t & maxCounter )
-    {
-        std::size_t counter = 0;
-        std::size_t tmp;
-        
-        for ( auto const var : variables )
-        {
-            tmp = var;
-            
-            while ( tmp )
-            {
-                tmp /= 2;
-                ++counter;
-            }
-            
-            if ( counter > maxCounter )
-                maxCounter = counter;
-            
-            counter = 0;
-        }
-    }
-
-    void fillVariablesWithFalse ()
-    {
-        for ( auto & expr : m_expressions )
-            for ( std::size_t k = 0; k < m_size; ++k )
-                expr.push_back( BoolRPN::s_false );
-    }
-
-    void convertDecimalsToBinaries ( std::vector< std::size_t > & variables )
-    {
-        std::size_t i = 0;
-        long j = 0;
-        auto variableSize = m_expressions.size();
-        
-        while ( i < variableSize )
-        {
-            j = m_size - 1;
-
-            while ( variables[ i ] && j >= 0 )
-            {
-                if ( variables[ i ] % 2 )
-                    m_expressions[ i ][ j ] = BoolRPN::s_true;
-                
-                --j;
-                variables[ i ] /= 2;
-            }
-
-            ++i;
-        }
-    }
-};
-
-// InputManager for CLI
-class InputManagerCLI final : public BaseInputManager
-{
-public:
-    void input ( BoolRPN::Table & expressions, std::size_t & size )
-    {
-        assert( expressions.size() );
-
-        m_expressions = std::move( expressions );
-        m_size = size;
-        size = 0;
-
-        char answer;
-
-        std::cout << "Do you want to add elements manually? (y/n) ";
-        std::cin >> answer;
-
-        if ( std::toupper( answer ) != 'Y' )
-        {
-            std::cout << "Select the option (r - random / t - truth table) ";
-            std::cin >> answer;
-            
-            if ( std::toupper( answer ) == 'R' )
-            {
-                std::size_t bits;
-
-                std::cout << "Enter the digit depth of variables ";
-                std::cin >> bits;
-
-                setVariablesRandomly( bits );
-            }
-            else
-            {
-                setViaTruthTable();
-
-                /*std::cout << "Do you want to see classification of boolean function? (y/n) ";
-                std::cin >> answer;
-                
-                if ( std::toupper( answer ) == 'Y' )
-                    flag = true;*/
-            }
-        }
-        else
-        {
-            std::cout << "Decimal or bitwise inputs? (d/b) ";
-            std::cin >> answer;
-            
-            if ( std::toupper( answer ) == 'B' )
-            {
-                std::size_t bits;
-                std::cout << "Enter the digit depth of variables ";
-                std::cin >> bits;
-
-                setVariablesBinaries( bits ); // Do not use bits
-            }
-            else
-            {
-                setVariablesDecimals();
-            }
-        }
-
-        expressions = std::move( m_expressions );
-        size = m_size;
-    }
-
-    void setVariablesDecimals () override
-    {
-        assert( m_expressions.size() );
-
-        std::vector< std::size_t > variables( m_expressions.size() );
-        std::size_t l = 0;
-
-        std::cout << "Enter through the enter every variable (decimal):\n";
-        
-        for ( auto & var : variables )
-        {
-            std::cout << l + 1 << " variable = ";
-            std::cin >> var;
-            ++l;
-        }
-
-        convertToBinaryVariables( variables );
-    }
-
-    void setVariablesBinaries ( std::size_t const size ) override
-    {
-        assert( m_expressions.size() );
-
-        clearAndReserve( size );
-
-        bool tmp;
-        std::size_t l = 0;
-
-        std::cout << "Enter through the space every variable:\n";
-        
-        for ( auto & expr : m_expressions )
-        {
-            std::cout << l + 1 << " variable = ";
-            ++l;
-            
-            for ( std::size_t i = 0; i < m_size; ++i )
-            {
-                std::cin >> tmp;
-                expr.push_back( static_cast< BoolRPN::Boolean >( tmp ) );
-            }
-        }
-    }
+    void convertDecimalsToBinaries ( std::vector< std::size_t > & );
 };
 
 } // namespace bcalc
 
-#endif // RPE_HPP
+#endif // RPE_HPP //
