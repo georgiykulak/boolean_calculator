@@ -1,7 +1,7 @@
 #ifndef CLI_INPUT_MANAGER_HPP
 #define CLI_INPUT_MANAGER_HPP
 
-#include "rpe.hpp"
+#include "base_input_manager.hpp"
 
 #include <iostream>
 
@@ -12,7 +12,7 @@ namespace bcalc
 class InputManagerCLI final : public BaseInputManager
 {
 public:
-    void input ( BoolRPN::Table & expressions, std::size_t & size ) override;
+    void input ( Table & expressions, std::size_t & size ) override;
 
     void setVariablesDecimals () override;
 

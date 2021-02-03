@@ -6,7 +6,7 @@ namespace bcalc
 
 //----------------------------------------------------------------------------//
 
-void InputManagerCLI::input ( BoolRPN::Table & expressions, std::size_t & size )
+void InputManagerCLI::input ( Table & expressions, std::size_t & size )
 {
     assert( expressions.size() );
 
@@ -109,7 +109,7 @@ void InputManagerCLI::setVariablesBinaries ( std::size_t const size )
         for ( std::size_t i = 0; i < m_size; ++i )
         {
             std::cin >> tmp;
-            expr.push_back( static_cast< BoolRPN::Boolean >( tmp ) );
+            expr.push_back( static_cast< Boolean >( tmp ) );
         }
     }
 }

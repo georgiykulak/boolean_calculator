@@ -4,12 +4,12 @@ project( boolean_calculator_cli )
 
 set( CMAKE_CXX_STANDARD 20 )
 
-add_library( bool_rpn_lib
-    src/rpe.cpp src/rpe.hpp
+add_library( base_input_manager
+    src/base_input_manager.cpp src/base_input_manager.hpp
 )
 
-add_library( base_input_manager
-    src/base_input_manager.cpp src/rpe.hpp
+add_library( bool_rpn_lib
+    src/rpe.cpp src/rpe.hpp src/base_input_manager.hpp
 )
 
 target_link_libraries( bool_rpn_lib
@@ -17,7 +17,7 @@ target_link_libraries( bool_rpn_lib
 )
 
 add_library( cli_input_manager
-    src/cli_input_manager.cpp src/cli_input_manager.hpp
+    src/cli_input_manager.cpp src/cli_input_manager.hpp src/base_input_manager.hpp
 )
 
 target_link_libraries( cli_input_manager

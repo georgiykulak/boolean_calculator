@@ -1,4 +1,4 @@
-#include "rpe.hpp"
+#include "base_input_manager.hpp"
 
 namespace bcalc
 {
@@ -18,7 +18,7 @@ void BaseInputManager::setVariablesRandomly ( std::size_t const size )
     for ( auto & expr : m_expressions )
         for ( std::size_t i = 0; i < m_size; ++i )
             expr.push_back(
-                    static_cast< BoolRPN::Boolean >( ( std::rand() % 17 ) % 2 )
+                    static_cast< Boolean >( ( std::rand() % 17 ) % 2 )
             );
 }
 
@@ -42,13 +42,13 @@ void BaseInputManager::setViaTruthTable () // full-cased testing
         while ( t2 <= m_size )
         {
             for ( std::size_t j = t1; j < t2; ++j )
-                expr.push_back( BoolRPN::s_false );
+                expr.push_back( s_false );
             
             t1 += tempsize;
             t2 += tempsize;
             
             for ( std::size_t j = t1; j < t2; ++j )
-                expr.push_back( BoolRPN::s_true );
+                expr.push_back( s_true );
             
             t1 += tempsize;
             t2 += tempsize;
@@ -70,7 +70,7 @@ void BaseInputManager::clearAndReserve ( std::size_t const size )
 
     for ( auto & expr : m_expressions )
     {
-        BoolRPN::LineOfTable().swap( expr );
+        LineOfTable().swap( expr );
         expr.reserve( m_size );
     }
 }
@@ -120,7 +120,7 @@ void BaseInputManager::fillVariablesWithFalse ()
 {
     for ( auto & expr : m_expressions )
         for ( std::size_t k = 0; k < m_size; ++k )
-            expr.push_back( BoolRPN::s_false );
+            expr.push_back( s_false );
 }
 
 //----------------------------------------------------------------------------//
@@ -138,7 +138,7 @@ void BaseInputManager::convertDecimalsToBinaries ( std::vector< std::size_t > & 
         while ( variables[ i ] && j >= 0 )
         {
             if ( variables[ i ] % 2 )
-                m_expressions[ i ][ j ] = BoolRPN::s_true;
+                m_expressions[ i ][ j ] = s_true;
             
             --j;
             variables[ i ] /= 2;
