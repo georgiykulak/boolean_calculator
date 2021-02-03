@@ -1,7 +1,8 @@
 #ifndef BASE_INPUT_MANAGER_HPP
 #define BASE_INPUT_MANAGER_HPP
 
-#include <vector>
+#include "type_values.hpp"
+
 #include <cassert>
 #include <cstdlib>
 #include <ctime>
@@ -9,12 +10,6 @@
 
 namespace bcalc
 {
-using Boolean = unsigned char;
-using LineOfTable = std::vector< Boolean >;
-using Table = std::vector< LineOfTable >;
-
-static constexpr Boolean s_false = 0;
-static constexpr Boolean s_true = 1;
 
 class BaseInputManager
 {
@@ -29,8 +24,8 @@ public:
     void setViaTruthTable (); // full-cased testing
 
 protected:
-    Table m_expressions; // TODO: Don't store data
-    std::size_t m_size; // TODO: Don't store data
+    Table m_expressions; // TODO: Shouldn't store data
+    std::size_t m_size; // TODO: Shouldn't store data
 
     void clearAndReserve ( std::size_t const );
 
