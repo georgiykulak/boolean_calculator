@@ -88,9 +88,13 @@ int BooleanCalculatorCli::run () // TODO: Make map for more readable code
 
     InputManagerCLI iManager;
     OutputManagerCLI oManager;
-    expr.set( iManager );
+
+    flag = expr.set( iManager );
     expr.calculateExpression();
     expr.get( oManager );
+
+    if ( flag )
+        expr.getClassification();
 
     return 0;
 }

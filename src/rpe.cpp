@@ -28,16 +28,18 @@ void BoolRPN::setExpression ( std::string const & expr ) // regular expression
 
 //----------------------------------------------------------------------------//
 
-void BoolRPN::set ( BaseInputManager & mngr )
+bool BoolRPN::set ( BaseInputManager & mngr )
 {
     assert( !m_formula.empty() );
 
-    mngr.input( m_expressions, m_size );
+    bool shouldGetClassification = mngr.input( m_expressions, m_size );
 
     // check ...
 
     LineOfTable().swap( m_answers );
     m_answers.reserve( m_size );
+
+    return shouldGetClassification;
 }
 
 //----------------------------------------------------------------------------//

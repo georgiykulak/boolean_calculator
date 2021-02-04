@@ -4,7 +4,7 @@
 namespace bcalc
 {
 
-void InputManagerCLI::input ( Table & expressions, std::size_t & size )
+bool InputManagerCLI::input ( Table & expressions, std::size_t & size )
 {
     assert( expressions.size() );
 
@@ -13,6 +13,7 @@ void InputManagerCLI::input ( Table & expressions, std::size_t & size )
     size = 0;
 
     char answer;
+    bool shouldGetClassification = false;
 
     std::cout << "Do you want to add elements manually? (y/n) ";
     std::cin >> answer;
@@ -35,11 +36,11 @@ void InputManagerCLI::input ( Table & expressions, std::size_t & size )
         {
             setViaTruthTable();
 
-            /*std::cout << "Do you want to see classification of boolean function? (y/n) ";
+            std::cout << "Do you want to see classification of boolean function? (y/n) ";
             std::cin >> answer;
             
             if ( std::toupper( answer ) == 'Y' )
-                flag = true;*/
+                shouldGetClassification = true;
         }
     }
     else
@@ -63,6 +64,8 @@ void InputManagerCLI::input ( Table & expressions, std::size_t & size )
 
     expressions = std::move( m_expressions );
     size = m_size;
+
+    return shouldGetClassification;
 }
 
 //----------------------------------------------------------------------------//

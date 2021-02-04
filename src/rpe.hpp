@@ -25,7 +25,7 @@ public:
 
     void setExpression ( std::string const & ); // TODO: Upgrade
 
-    void set ( BaseInputManager & );
+    bool set ( BaseInputManager & );
 
     void get ( BaseOutputManager & ) const noexcept;
 
