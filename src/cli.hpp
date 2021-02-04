@@ -2,7 +2,9 @@
 #define CLI_HPP
 
 #include "rpe.hpp"
-#include <cctype>
+#include "classificator.hpp"
+#include "cli_input_manager.hpp"
+#include "cli_output_manager.hpp"
 
 namespace bcalc
 {
@@ -10,20 +12,14 @@ namespace bcalc
 class BooleanCalculatorCli
 {
 public:
-    ~BooleanCalculatorCli () = default;
-
-    BooleanCalculatorCli () = default;
-
     BooleanCalculatorCli ( int argc, char ** argv );
 
-    int run ();
+    int run (); // TODO: Provide menu to work with more than one expression
 
 private:
-    void construct ();
-
     void help ();
 };
 
 } // namespace bcalc
 
-#endif // CLI_HPP
+#endif // CLI_HPP //

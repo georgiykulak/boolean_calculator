@@ -6,76 +6,50 @@ namespace bcalc
 BooleanCalculatorCli::BooleanCalculatorCli ( int argc, char ** argv )
 {}
 
-int BooleanCalculatorCli::run () // TODO: Make map for more readable code
+//----------------------------------------------------------------------------//
+
+int BooleanCalculatorCli::run ()
 {
-    BoolRPE expr;
+    BoolRPN expr;
     std::string expr_string;
-    char answer;
-    bool flag = true;
+    char answer = 'n';
 
     help();
 
     std::cout << "Enter your function\n";
     std::getline( std::cin, expr_string );
 
-    expr = BoolRPE( expr_string );
+    expr = BoolRPN( expr_string );
+
+    InputManagerCLI iManager;
+    OutputManagerCLI oManager;
+    Classificator classificator;
 
     do
     {
-        std::cout << "Do you want to add elements manually? (y/n) ";
-        std::cin >> answer;
-
-        if ( std::toupper( answer ) != 'Y' )
-        {
-            std::cout << "Select the option (r - random / t - truth table) ";
-            std::cin >> answer;
-            
-            if ( std::toupper( answer ) == 'R' )
-            {
-                std::size_t bits;
-
-                std::cout << "Enter the digit depth of variables ";
-                std::cin >> bits;
-
-                expr.setVariablesRandomly( bits );
-            }
-            else
-            {
-                expr.setViaTruthTable();
-
-                std::cout << "Do you want to see classification of boolean function? (y/n) ";
-                std::cin >> answer;
-                
-                if ( std::toupper( answer ) == 'Y' )
-                    flag = true;
-            }
-        }
-        else
-        {
-            std::cout << "Decimal or bitwise inputs? (d/b) ";
-            std::cin >> answer;
-            
-            if ( std::toupper( answer ) == 'B' )
-            {
-                std::size_t bits;
-                std::cout << "Enter the digit depth of variables ";
-                std::cin >> bits;
-
-                expr.setVariablesBinaries( bits );
-            }
-            else
-                expr.setVariablesDecimals();
-        }
-        
-        expr.getVariables();
+        expr.set( iManager );
         expr.calculateExpression();
-        expr.getAnswer();
-        
-        if ( flag )
-            expr.classification();
-        
-        flag = false;
-        
+        expr.get( oManager );
+            
+        classificator.get(
+                expr.getVariables()
+            ,   expr.getAnswer()
+            ,   [ answer ]() mutable -> bool
+                {
+                    std::cout <<
+                        "Do you want to see the classification"
+                        " of boolean function? (y/n) ";
+                    
+                    std::cin >> answer;
+                    
+                    return std::toupper( answer ) == 'Y';
+                }
+            ,   []( std::string_view const sv )
+                {
+                    std::cout << sv << std::endl;
+                }
+        );
+
         std::cout << "Do you want to continue? (y/n) ";
         std::cin >> answer;
     }
@@ -83,6 +57,8 @@ int BooleanCalculatorCli::run () // TODO: Make map for more readable code
 
     return 0;
 }
+
+//----------------------------------------------------------------------------//
 
 void BooleanCalculatorCli::help ()
 {
