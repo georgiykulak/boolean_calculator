@@ -8,11 +8,11 @@ BooleanCalculatorCli::BooleanCalculatorCli ( int argc, char ** argv )
 
 //----------------------------------------------------------------------------//
 
-int BooleanCalculatorCli::run () // TODO: Make map for more readable code
+int BooleanCalculatorCli::run ()
 {
     BoolRPN expr;
     std::string expr_string;
-    char answer;
+    char answer = 'n';
     bool flag = false;
 
     help();
@@ -22,79 +22,22 @@ int BooleanCalculatorCli::run () // TODO: Make map for more readable code
 
     expr = BoolRPN( expr_string );
 
-    /*
-    do
-    {
-        std::cout << "Do you want to add elements manually? (y/n) ";
-        std::cin >> answer;
-
-        if ( std::toupper( answer ) != 'Y' )
-        {
-            std::cout << "Select the option (r - random / t - truth table) ";
-            std::cin >> answer;
-            
-            if ( std::toupper( answer ) == 'R' )
-            {
-                std::size_t bits;
-
-                std::cout << "Enter the digit depth of variables ";
-                std::cin >> bits;
-
-                expr.setVariablesRandomly( bits );
-            }
-            else
-            {
-                expr.setViaTruthTable();
-
-                std::cout << "Do you want to see classification of boolean function? (y/n) ";
-                std::cin >> answer;
-                
-                if ( std::toupper( answer ) == 'Y' )
-                    flag = true;
-            }
-        }
-        else
-        {
-            std::cout << "Decimal or bitwise inputs? (d/b) ";
-            std::cin >> answer;
-            
-            if ( std::toupper( answer ) == 'B' )
-            {
-                std::size_t bits;
-                std::cout << "Enter the digit depth of variables ";
-                std::cin >> bits;
-
-                expr.setVariablesBinaries( bits );
-            }
-            else
-                expr.setVariablesDecimals();
-        }
-        
-        expr.getVariables();
-        expr.calculateExpression();
-        expr.getAnswer();
-        
-        if ( flag )
-            expr.getClassification();
-        
-        flag = false;
-        
-        std::cout << "Do you want to continue? (y/n) ";
-        std::cin >> answer;
-
-    }
-    while ( std::toupper( answer ) == 'Y' );
-    */
-
     InputManagerCLI iManager;
     OutputManagerCLI oManager;
 
-    flag = expr.set( iManager );
-    expr.calculateExpression();
-    expr.get( oManager );
+    do
+    {
+        flag = expr.set( iManager );
+        expr.calculateExpression();
+        expr.get( oManager );
 
-    if ( flag )
-        expr.getClassification();
+        if ( flag )
+            expr.getClassification();
+
+        std::cout << "Do you want to continue? (y/n) ";
+        std::cin >> answer;
+    }
+    while ( std::toupper( answer ) == 'Y' );
 
     return 0;
 }
