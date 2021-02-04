@@ -2,6 +2,7 @@
 #define CLI_HPP
 
 #include "rpe.hpp"
+#include "classificator.hpp"
 #include "cli_input_manager.hpp"
 #include "cli_output_manager.hpp"
 
@@ -13,7 +14,7 @@ class BooleanCalculatorCli
 public:
     BooleanCalculatorCli ( int argc, char ** argv );
 
-    int run ();
+    int run (); // TODO: Provide menu to work with more than one expression
 
 private:
     void help ();

@@ -35,16 +35,12 @@ add_library( cli_output_manager
     src/cli_output_manager.cpp src/cli_output_manager.hpp src/base_output_manager.hpp
 )
 
-target_link_libraries( cli_output_manager
-    classificator
-)
-
 add_library( cli_lib
     src/cli.cpp src/cli.hpp
 )
 
 target_link_libraries( cli_lib
-    bool_rpn cli_input_manager cli_output_manager
+    bool_rpn classificator cli_input_manager cli_output_manager
 )
 
 add_executable( bool_calc

@@ -15,7 +15,7 @@ class BaseInputManager
 {
 public:
     virtual ~BaseInputManager () {};
-    virtual bool input ( Table &, std::size_t & ) = 0;
+    virtual void input ( Table &, std::size_t & ) = 0;
     virtual void setVariablesDecimals () = 0;
     virtual void setVariablesBinaries ( std::size_t const ) = 0; // TODO: Do not depend on size as arg, parse string with bools
     

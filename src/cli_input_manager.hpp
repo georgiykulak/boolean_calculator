@@ -12,7 +12,7 @@ namespace bcalc
 class InputManagerCLI final : public BaseInputManager
 {
 public:
-    bool input ( Table &, std::size_t & ) override;
+    void input ( Table &, std::size_t & ) override;
 
     void setVariablesDecimals () override;
 

@@ -1,7 +1,7 @@
 #ifndef BASE_OUTPUT_MANAGER_HPP
 #define BASE_OUTPUT_MANAGER_HPP
 
-#include "base_input_manager.hpp"
+#include "types_values.hpp"
 
 namespace bcalc
 {

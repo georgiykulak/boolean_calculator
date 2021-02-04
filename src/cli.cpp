@@ -13,7 +13,6 @@ int BooleanCalculatorCli::run ()
     BoolRPN expr;
     std::string expr_string;
     char answer = 'n';
-    bool flag = false;
 
     help();
 
@@ -28,26 +27,28 @@ int BooleanCalculatorCli::run ()
 
     do
     {
-        flag = expr.set( iManager );
+        expr.set( iManager );
         expr.calculateExpression();
         expr.get( oManager );
-
-        // TODO: Move to OutputManagerCLI::getClassification()
-        if ( flag )
-        {
-            auto const & cArr = classificator.get(
-                    expr.getVariables()
-                ,   expr.getAnswer()
-            );
-
-            Classificator::Loop::forEach(
-                    cArr
-                ,   []( std::string_view const sv )
-                    {
-                        std::cout << sv << std::endl;
-                    }
-            );
-        }
+            
+        classificator.get(
+                expr.getVariables()
+            ,   expr.getAnswer()
+            ,   [ answer ]() mutable -> bool
+                {
+                    std::cout <<
+                        "Do you want to see the classification"
+                        " of boolean function? (y/n) ";
+                    
+                    std::cin >> answer;
+                    
+                    return std::toupper( answer ) == 'Y';
+                }
+            ,   []( std::string_view const sv )
+                {
+                    std::cout << sv << std::endl;
+                }
+        );
 
         std::cout << "Do you want to continue? (y/n) ";
         std::cin >> answer;

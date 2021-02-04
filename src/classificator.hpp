@@ -6,6 +6,7 @@
 #include <array>
 #include <string_view>
 #include <cassert>
+#include <functional>
 
 namespace bcalc
 {
@@ -17,6 +18,8 @@ public:
 
     using ClassificationDictionary = std::array< bool, s_classes >;
     using Pair = std::pair< std::string_view, std::string_view >;
+    using InputFunction = std::function< bool ( void ) >;
+    using OutputFunction = std::function< void ( std::string_view const ) >;
 
     static constexpr
     std::array< Pair, s_classes > s_strings =
@@ -61,13 +64,17 @@ public:
         }
     };
 
-    ClassificationDictionary const & get (
+    void get (
             Table const & expressions
         ,   LineOfTable const & answers
+        ,   InputFunction inputGetter = [](){ return false; }
+        ,   OutputFunction outputGetter = []( ... ){}
     ) noexcept;
 
 private:
     ClassificationDictionary m_classes;
+
+    bool isNotSetViaTruthTable ( Table const & expressions ) const noexcept;
 };
 
 } // namespace bcalc

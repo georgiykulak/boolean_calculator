@@ -2,7 +2,6 @@
 #define CLI_OUTPUT_MANAGER_HPP
 
 #include "base_output_manager.hpp"
-#include "classificator.hpp"
 
 #include <iostream>
 

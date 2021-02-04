@@ -3,12 +3,18 @@
 namespace bcalc
 {
 
-Classificator::ClassificationDictionary const & Classificator::get (
+void Classificator::get (
         Table const & expressions
     ,   LineOfTable const & answers
+    ,   InputFunction inputGetter
+    ,   OutputFunction outputGetter
 ) noexcept
 {
-    // TODO: if ( isNotSetViaTruthTable( expressions ) ) return;
+    if ( isNotSetViaTruthTable( expressions ) )
+        return;
+
+    if ( !inputGetter() )
+        return;
 
     auto const sizeOfVars = expressions.size();
     
@@ -25,6 +31,9 @@ Classificator::ClassificationDictionary const & Classificator::get (
     bool const c0 = answers[ 0 ];
     bool const f = answers[ size - 1 ];
     bool c = answers[ 0 ];
+
+    for ( auto & b : m_classes )
+        b = false;
 
     if ( answers[ 0 ] )
         m_classes[ 0 ] = true;
@@ -92,7 +101,18 @@ Classificator::ClassificationDictionary const & Classificator::get (
         }
     }
 
-    return m_classes;
+    Classificator::Loop::forEach( m_classes, outputGetter );
+}
+
+//----------------------------------------------------------------------------//
+
+bool Classificator::isNotSetViaTruthTable (
+        Table const & expressions
+) const noexcept
+{
+    // TODO: isNotSetViaTruthTable function
+
+    return false;
 }
 
 } // namespace bcalc
