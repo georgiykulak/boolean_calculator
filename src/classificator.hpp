@@ -7,6 +7,7 @@
 #include <string_view>
 #include <cassert>
 #include <functional>
+#include <cmath>
 
 namespace bcalc
 {
@@ -74,7 +75,7 @@ public:
 private:
     ClassificationDictionary m_classes;
 
-    bool isNotSetViaTruthTable ( Table const & expressions ) const noexcept;
+    bool isSetViaTruthTable ( Table const & expressions ) const noexcept;
 };
 
 } // namespace bcalc

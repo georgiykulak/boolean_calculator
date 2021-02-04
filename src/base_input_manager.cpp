@@ -28,30 +28,30 @@ void BaseInputManager::setViaTruthTable ()
 {
     assert( m_expressions.size() );
 
-    std::size_t tempsize = std::pow( 2, m_expressions.size() );
+    std::size_t tmpSize = std::pow( 2, m_expressions.size() );
     std::size_t t1 = 0;
     std::size_t t2;
     
-    clearAndReserve( tempsize );
+    clearAndReserve( tmpSize );
 
     for ( auto & expr : m_expressions )
     {
-        tempsize /= 2;
-        t2 = tempsize;
+        tmpSize /= 2;
+        t2 = tmpSize;
 
         while ( t2 <= m_size )
         {
             for ( std::size_t j = t1; j < t2; ++j )
                 expr.push_back( s_false );
             
-            t1 += tempsize;
-            t2 += tempsize;
+            t1 += tmpSize;
+            t2 += tmpSize;
             
             for ( std::size_t j = t1; j < t2; ++j )
                 expr.push_back( s_true );
             
-            t1 += tempsize;
-            t2 += tempsize;
+            t1 += tmpSize;
+            t2 += tmpSize;
         }
 
         t1 = 0;

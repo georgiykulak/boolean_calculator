@@ -10,12 +10,6 @@ void Classificator::get (
     ,   OutputFunction outputGetter
 ) noexcept
 {
-    if ( isNotSetViaTruthTable( expressions ) )
-        return;
-
-    if ( !inputGetter() )
-        return;
-
     auto const sizeOfVars = expressions.size();
     
     assert( sizeOfVars );
@@ -24,7 +18,11 @@ void Classificator::get (
     
     assert( size );
 
-    // check ...
+    if ( !isSetViaTruthTable( expressions ) )
+        return;
+
+    if ( !inputGetter() )
+        return;
 
     bool flag = true;
     bool exit_flag = false;
@@ -106,13 +104,46 @@ void Classificator::get (
 
 //----------------------------------------------------------------------------//
 
-bool Classificator::isNotSetViaTruthTable (
+bool Classificator::isSetViaTruthTable (
         Table const & expressions
 ) const noexcept
 {
-    // TODO: isNotSetViaTruthTable function
+    std::size_t const pwr = std::pow( 2, expressions.size() );
 
-    return false;
+    for ( auto const & expr : expressions )
+        if ( expr.size() != pwr )
+            return false;
+
+    auto tmpSize = pwr;
+    std::size_t t1 = 0;
+    std::size_t t2;
+
+    for ( auto & expr : expressions )
+    {
+        tmpSize /= 2;
+        t2 = tmpSize;
+
+        while ( t2 <= pwr )
+        {
+            for ( std::size_t j = t1; j < t2; ++j )
+                if ( expr[ j ] != s_false )
+                    return false;
+            
+            t1 += tmpSize;
+            t2 += tmpSize;
+            
+            for ( std::size_t j = t1; j < t2; ++j )
+                if ( expr[ j ] != s_true )
+                    return false;
+            
+            t1 += tmpSize;
+            t2 += tmpSize;
+        }
+
+        t1 = 0;
+    }
+
+    return true;
 }
 
 } // namespace bcalc
