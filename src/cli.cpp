@@ -24,6 +24,7 @@ int BooleanCalculatorCli::run ()
 
     InputManagerCLI iManager;
     OutputManagerCLI oManager;
+    Classificator classificator;
 
     do
     {
@@ -31,8 +32,22 @@ int BooleanCalculatorCli::run ()
         expr.calculateExpression();
         expr.get( oManager );
 
+        // TODO: Move to OutputManagerCLI::getClassification()
         if ( flag )
-            expr.getClassification();
+        {
+            auto const & cArr = classificator.get(
+                    expr.getVariables()
+                ,   expr.getAnswer()
+            );
+
+            Classificator::Loop::forEach(
+                    cArr
+                ,   []( std::string_view const sv )
+                    {
+                        std::cout << sv << std::endl;
+                    }
+            );
+        }
 
         std::cout << "Do you want to continue? (y/n) ";
         std::cin >> answer;

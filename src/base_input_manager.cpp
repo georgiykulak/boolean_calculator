@@ -24,7 +24,7 @@ void BaseInputManager::setVariablesRandomly ( std::size_t const size )
 
 //----------------------------------------------------------------------------//
 
-void BaseInputManager::setViaTruthTable () // full-cased testing
+void BaseInputManager::setViaTruthTable ()
 {
     assert( m_expressions.size() );
 

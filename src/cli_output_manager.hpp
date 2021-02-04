@@ -8,6 +8,7 @@
 namespace bcalc
 {
 
+// OutputManager for CLI
 class OutputManagerCLI final : public BaseOutputManager
 {
 public:

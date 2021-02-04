@@ -30,6 +30,7 @@ void OutputManagerCLI::getVariables ( Table const & expressions ) const noexcept
 
         for ( auto const & elem : expr )
             std::cout << static_cast< bool >( elem );
+
         std::cout << std::endl;
     }
 }
@@ -42,8 +43,10 @@ void OutputManagerCLI::getAnswer ( LineOfTable const & answers ) const noexcept
         return;
 
     std::cout << "Answer is ";
+
     for ( auto const & elem : answers )
         std::cout << static_cast< bool >( elem );
+
     std::cout << std::endl;
 }
 

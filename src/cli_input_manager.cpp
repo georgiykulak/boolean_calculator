@@ -36,7 +36,8 @@ bool InputManagerCLI::input ( Table & expressions, std::size_t & size )
         {
             setViaTruthTable();
 
-            std::cout << "Do you want to see classification of boolean function? (y/n) ";
+            std::cout <<
+                "Do you want to see classification of boolean function? (y/n) ";
             std::cin >> answer;
             
             if ( std::toupper( answer ) == 'Y' )
