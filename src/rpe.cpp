@@ -42,39 +42,25 @@ void BoolRPN::set ( BaseInputManager & mngr )
 
 //----------------------------------------------------------------------------//
 
-/*void BoolRPN::get ( BaseInputManager & mngr ) const noexcept
+void BoolRPN::get ( BaseOutputManager & mngr ) const noexcept
 {
     assert( !m_formula.empty() );
 
-}*/
-
-//----------------------------------------------------------------------------//
-
-void BoolRPN::getVariables () const noexcept
-{
-    std::cout << "Variables:\n";
-    
-    std::size_t l = 0;
-    
-    for ( auto const & expr : m_expressions )
-    {
-        std::cout << l + 1 << " variable = ";
-        ++l;
-
-        for ( auto const & elem : expr )
-            std::cout << static_cast< bool >( elem );
-        std::cout << std::endl;
-    }
+    mngr.output( getVariables(), getAnswer() );
 }
 
 //----------------------------------------------------------------------------//
 
-void BoolRPN::getAnswer () const noexcept
+Table const & BoolRPN::getVariables () const noexcept
 {
-    std::cout << "Answer is ";
-    for ( auto const & elem : m_answers )
-        std::cout << static_cast< bool >( elem );
-    std::cout << std::endl;
+    return m_expressions;
+}
+
+//----------------------------------------------------------------------------//
+
+LineOfTable const & BoolRPN::getAnswer () const noexcept
+{
+    return m_answers;
 }
 
 //----------------------------------------------------------------------------//

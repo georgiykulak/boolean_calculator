@@ -8,6 +8,7 @@
 #include <cmath>
 
 #include "base_input_manager.hpp"
+#include "base_output_manager.hpp"
 
 namespace bcalc
 {
@@ -16,7 +17,6 @@ namespace bcalc
 class BoolRPN
 {
 public:
-
     ~BoolRPN () = default;
 
     BoolRPN () = default;
@@ -27,11 +27,11 @@ public:
 
     void set ( BaseInputManager & );
 
-    // void get ( BaseInputManager & ) const noexcept;
+    void get ( BaseOutputManager & ) const noexcept;
 
-    void getVariables () const noexcept;
+    Table const & getVariables () const noexcept;
     
-    void getAnswer () const noexcept;
+    LineOfTable const & getAnswer () const noexcept;
 
     void getClassification () noexcept;
 
@@ -71,8 +71,8 @@ private:
     */
 
     std::string m_formula;
-    std::array< bool, 5 > m_classes; // Should be map and removed from class
-    bool m_classP = false; // This too
+    std::array< bool, 5 > m_classes; // TODO: Should be map and removed from class
+    bool m_classP = false; // TODO: This too
 
     void analyze (); // TODO: RegExp
 

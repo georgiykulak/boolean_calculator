@@ -3,6 +3,7 @@
 
 #include "rpe.hpp"
 #include "cli_input_manager.hpp"
+#include "cli_output_manager.hpp"
 
 namespace bcalc
 {

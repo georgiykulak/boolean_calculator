@@ -86,12 +86,11 @@ int BooleanCalculatorCli::run () // TODO: Make map for more readable code
     while ( std::toupper( answer ) == 'Y' );
     */
 
-    InputManagerCLI ioManager;
-    expr.set( ioManager );
-    //expr.get( ioManager );
-    expr.getVariables();
+    InputManagerCLI iManager;
+    OutputManagerCLI oManager;
+    expr.set( iManager );
     expr.calculateExpression();
-    expr.getAnswer();
+    expr.get( oManager );
 
     return 0;
 }

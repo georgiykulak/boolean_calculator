@@ -4,8 +4,6 @@
 namespace bcalc
 {
 
-//----------------------------------------------------------------------------//
-
 void InputManagerCLI::input ( Table & expressions, std::size_t & size )
 {
     assert( expressions.size() );
