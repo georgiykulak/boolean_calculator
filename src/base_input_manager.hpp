@@ -1,7 +1,7 @@
 #ifndef BASE_INPUT_MANAGER_HPP
 #define BASE_INPUT_MANAGER_HPP
 
-#include "type_values.hpp"
+#include "types_values.hpp"
 
 #include <cassert>
 #include <cstdlib>

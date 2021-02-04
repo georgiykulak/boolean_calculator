@@ -14,7 +14,7 @@ BoolRPN::BoolRPN ( std::string const & expr )
 
 //----------------------------------------------------------------------------//
 
-void BoolRPN::setExpression ( std::string const & expr ) // regular expression
+void BoolRPN::setExpression ( std::string const & expr )
 {
     assert( !expr.empty() );
 
@@ -258,7 +258,7 @@ constexpr bool BoolRPN::is_other ( char const c ) noexcept
 // Private implementations                                                    //
 //----------------------------------------------------------------------------//
 
-void BoolRPN::analyze () // TODO: RegExp
+void BoolRPN::analyze ()
 {
     assert( m_formula.length() );
 
@@ -285,12 +285,14 @@ void BoolRPN::analyze () // TODO: RegExp
               && !is_var( m_formula[ i ] )
             )
             {
-                std::cout << "The " << i + 1 << " symbol is not suitable!\n";
-                std::cout << "Try to enter formula again\n";
+                assert( false );
+                // TODO: Do smth with that case, for e.g. throw exception
+                //std::cout << "The " << i + 1 << " symbol is not suitable!\n";
+                //std::cout << "Try to enter formula again\n";
                 
-                std::getline( std::cin, m_formula );
-                flag_corr = true;
-                break;
+                //std::getline( std::cin, m_formula );
+                //flag_corr = true;
+                //break;
             }
 
             if ( m_formula[ i ] == '(' )
@@ -302,11 +304,10 @@ void BoolRPN::analyze () // TODO: RegExp
 
         if ( loop )
         {
-            std::cout << "There is an missing loop!\n"; // Replace with exception
-            std::cout << "Try to enter formula again\n";
-            
-            std::getline( std::cin, m_formula );
-            flag_corr = true;
+            // TODO: Do smth with that case, for e.g. throw exception
+            //std::cout << "There is an missing loop!\n";
+            //std::cout << "Try to enter formula again\n";
+            assert( false );
         }
     }
 
@@ -378,12 +379,14 @@ void BoolRPN::analyze () // TODO: RegExp
 
     if ( flag )
     {
-        std::cout << "This is more correct expression:\n";
+        // TODO: Don't tell anything, move all optimizations nad hint to other functions
+        /*std::cout << "This is more correct expression:\n";
+
         for ( int i = 0; i < size; ++i )
             if ( m_formula[ i ] != ' ' )
                 std::cout << m_formula[ i ];
 
-        std::cout << std::endl;
+        std::cout << std::endl;*/
     }
 }
 
