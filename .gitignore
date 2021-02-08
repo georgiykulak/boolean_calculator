@@ -3,6 +3,7 @@
 
 # Compiled Object files
 *.slo
+*.sln
 *.lo
 *.o
 *.obj
@@ -32,4 +33,19 @@
 *.app
 
 # Executable directories
+Debug
+Release
 build
+
+# Configs
+*.ilk
+*.pdb
+*.idb
+
+# Logs
+*.log
+*.tlog
+
+# IDE
+.vs
+.vscode
