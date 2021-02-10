@@ -1,4 +1,5 @@
 #include "win.h"
+//#include <rpe.hpp>
 
 #define MAX_LOADSTRING 100
 
@@ -10,7 +11,12 @@ WCHAR g_szWindowClass[ MAX_LOADSTRING ];            // the main window class nam
 ATOM                MyRegisterClass( HINSTANCE hInstance );
 BOOL                InitInstance( HINSTANCE, int );
 LRESULT CALLBACK    WndProc( HWND, UINT, WPARAM, LPARAM );
-INT_PTR CALLBACK    About( HWND, UINT, WPARAM, LPARAM );
+INT_PTR CALLBACK    about( HWND, UINT, WPARAM, LPARAM );
+INT_PTR CALLBACK setFormula(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
+INT_PTR CALLBACK setVariablesViaTruthTable(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
+INT_PTR CALLBACK setVariablesRandomly(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
+INT_PTR CALLBACK setVariablesInBinaryMode(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
+INT_PTR CALLBACK setVariablesInDecimalMode(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
 
 int WINAPI wWinMain (
         _In_     HINSTANCE hInstance
@@ -35,7 +41,8 @@ int WINAPI wWinMain (
         return FALSE;
     }
 
-    HACCEL hAccelTable = LoadAccelerators( hInstance, MAKEINTRESOURCE( IDC_WIN ) );
+    HACCEL hAccelTable =
+        LoadAccelerators( hInstance, MAKEINTRESOURCE( IDC_WIN ) );
 
     MSG msg;
 
@@ -55,7 +62,7 @@ int WINAPI wWinMain (
 //----------------------------------------------------------------------------//
 
 // Registers the window class.
-ATOM MyRegisterClass( HINSTANCE hInstance )
+ATOM MyRegisterClass ( HINSTANCE hInstance )
 {
     WNDCLASSEXW wcex;
 
@@ -83,7 +90,7 @@ ATOM MyRegisterClass( HINSTANCE hInstance )
 // Also:
 //        In this function, we save the instance handle in a global variable and
 //        create and display the main program window.
-BOOL InitInstance( HINSTANCE hInstance, int nCmdShow )
+BOOL InitInstance ( HINSTANCE hInstance, int nCmdShow )
 {
     g_hInst = hInstance; // Store instance handle in our global variable
 
@@ -119,7 +126,7 @@ BOOL InitInstance( HINSTANCE hInstance, int nCmdShow )
 //  WM_COMMAND  - process the application menu
 //  WM_PAINT    - Paint the main window
 //  WM_DESTROY  - post a quit message and return
-LRESULT CALLBACK WndProc( HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam )
+LRESULT CALLBACK WndProc ( HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam )
 {
     switch ( message )
     {
@@ -130,16 +137,64 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam 
             switch ( wmId )
             {
             case IDM_ABOUT:
-                DialogBox( g_hInst, MAKEINTRESOURCE( IDD_ABOUTBOX ), hWnd, About );
+                DialogBox( g_hInst, MAKEINTRESOURCE( IDD_ABOUTBOX ), hWnd, about );
                 break;
+
             case IDM_EXIT:
                 DestroyWindow( hWnd );
                 break;
+
+            case IDM_CALCULATOR_SETFORMULA:
+                DialogBox(g_hInst, MAKEINTRESOURCE(IDD_ABOUTBOX), hWnd, setFormula);
+                break;
+            
+            case IDM_SETVARIABLES_VIATRUTHTABLE:
+                DialogBox(g_hInst, MAKEINTRESOURCE(IDD_ABOUTBOX), hWnd, setVariablesViaTruthTable);
+                break;
+            
+            case IDM_SETVARIABLES_RANDOMLY:
+                DialogBox(g_hInst, MAKEINTRESOURCE(IDD_ABOUTBOX), hWnd, setVariablesRandomly);
+                break;
+            
+            case IDM_SETVARIABLES_INBINARYMODE:
+                DialogBox(g_hInst, MAKEINTRESOURCE(IDD_ABOUTBOX), hWnd, setVariablesInBinaryMode);
+                break;
+            
+            case IDM_SETVARIABLES_INDECIMALMODE:
+                DialogBox(g_hInst, MAKEINTRESOURCE(IDD_ABOUTBOX), hWnd, setVariablesInDecimalMode);
+                break;
+            
+            case IDM_CALCULATOR_CALCULATE:
+                /*if ( !calculate() )
+                    MessageBox(
+                            hWnd
+                        ,   L"Can't calculate because nothing have been set"
+                        ,   L"Calculation Error"
+                        ,   MB_ICONERROR
+                    );*/
+                break;
+            
+            case IDM_CALCULATOR_GET:
+                // MessageBox with big message string with results
+                break;
+            
+            case IDM_CALCULATOR_GETCLASSIFICATION:
+                /*if ( !classificable() )
+                    MessageBox(
+                        hWnd
+                        ,   L"Can't get classification"
+                        ,   L"Classification Error"
+                        ,   MB_ICONERROR
+                    );*/
+                // else: MessageBox with big message string with classification
+                break;
+
             default:
                 return DefWindowProc( hWnd, message, wParam, lParam );
             }
         }
         break;
+    
     case WM_PAINT:
         {
             PAINTSTRUCT ps;
@@ -148,9 +203,11 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam 
             EndPaint( hWnd, &ps );
         }
         break;
+    
     case WM_DESTROY:
         PostQuitMessage( 0 );
         break;
+    
     default:
         return DefWindowProc( hWnd, message, wParam, lParam );
     }
@@ -161,7 +218,7 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam 
 //----------------------------------------------------------------------------//
 
 // Message handler for about box.
-INT_PTR CALLBACK About( HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam )
+INT_PTR CALLBACK about ( HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam )
 {
     UNREFERENCED_PARAMETER( lParam );
 
@@ -180,4 +237,124 @@ INT_PTR CALLBACK About( HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam )
     }
 
     return ( INT_PTR )FALSE;
+}
+
+//----------------------------------------------------------------------------//
+
+INT_PTR CALLBACK setFormula(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
+{
+    UNREFERENCED_PARAMETER(lParam);
+
+    switch (message)
+    {
+    case WM_INITDIALOG:
+        return (INT_PTR)TRUE;
+
+    case WM_COMMAND:
+        if (LOWORD(wParam) == IDOK || LOWORD(wParam) == IDCANCEL)
+        {
+            EndDialog(hDlg, LOWORD(wParam));
+            return (INT_PTR)TRUE;
+        }
+        // Use child "EDIT" window to write the formula
+        break;
+    }
+
+    return (INT_PTR)FALSE;
+}
+
+//----------------------------------------------------------------------------//
+
+INT_PTR CALLBACK setVariablesViaTruthTable(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
+{
+    UNREFERENCED_PARAMETER(lParam);
+
+    switch (message)
+    {
+    case WM_INITDIALOG:
+        return (INT_PTR)TRUE;
+
+    case WM_COMMAND:
+        if (LOWORD(wParam) == IDOK || LOWORD(wParam) == IDCANCEL)
+        {
+            EndDialog(hDlg, LOWORD(wParam));
+            return (INT_PTR)TRUE;
+        }
+        // Use child "EDIT" window to fill variables with the truth table
+        break;
+    }
+
+    return (INT_PTR)FALSE;
+}
+
+//----------------------------------------------------------------------------//
+
+INT_PTR CALLBACK setVariablesRandomly(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
+{
+    UNREFERENCED_PARAMETER(lParam);
+
+    switch (message)
+    {
+    case WM_INITDIALOG:
+        return (INT_PTR)TRUE;
+
+    case WM_COMMAND:
+        if (LOWORD(wParam) == IDOK || LOWORD(wParam) == IDCANCEL)
+        {
+            EndDialog(hDlg, LOWORD(wParam));
+            return (INT_PTR)TRUE;
+        }
+        // Use child "EDIT" window to fill variables with random values
+        break;
+    }
+
+    return (INT_PTR)FALSE;
+}
+
+//----------------------------------------------------------------------------//
+
+INT_PTR CALLBACK setVariablesInBinaryMode(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
+{
+    UNREFERENCED_PARAMETER(lParam);
+
+    switch (message)
+    {
+    case WM_INITDIALOG:
+        return (INT_PTR)TRUE;
+
+    case WM_COMMAND:
+        if (LOWORD(wParam) == IDOK || LOWORD(wParam) == IDCANCEL)
+        {
+            EndDialog(hDlg, LOWORD(wParam));
+            return (INT_PTR)TRUE;
+        }
+        // Use child "EDIT" window to fill variables with binary values
+        break;
+    }
+
+    return (INT_PTR)FALSE;
+}
+
+//----------------------------------------------------------------------------//
+
+INT_PTR CALLBACK setVariablesInDecimalMode(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
+{
+    UNREFERENCED_PARAMETER(lParam);
+
+    switch (message)
+    {
+    case WM_INITDIALOG:
+        return (INT_PTR)TRUE;
+
+    case WM_COMMAND:
+        if (LOWORD(wParam) == IDOK || LOWORD(wParam) == IDCANCEL)
+        {
+            EndDialog(hDlg, LOWORD(wParam));
+            return (INT_PTR)TRUE;
+        }
+        // Use child "EDIT" window to fill variables with decimal values
+        break;
+    }
+
+    return (INT_PTR)FALSE;
 }
